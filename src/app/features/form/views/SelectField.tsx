@@ -2,6 +2,7 @@ import React, { ReactElement } from "react";
 import { useField } from "formik";
 import Select from "react-select";
 import { ObjectWithDependenciesItem } from "../services";
+import styles from "./SelectField.scss";
 
 type SelectFieldProps = {
   label: string;
@@ -40,7 +41,7 @@ export const SelectField = (
 
 
   return (
-    <div>
+    <div className={styles["select-field"]}>
       <label>
         {label}
         <Select
