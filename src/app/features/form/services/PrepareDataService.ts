@@ -80,19 +80,7 @@ class PrepareData {
     return `${headersNextItem}_${parsedStringObjectIndex}_${headersNextItemIndex}`;
   }
 
-  private getDependencyLink = (
-    dependencyPath: string,
-    headersIndex: number,
-    parsedStringObjectIndex: number
-  ) => (
-    `${
-      dependencyPath || HEADERS[0]
-    }/${
-      this.getDependencyPathEnd(headersIndex, parsedStringObjectIndex)
-    }`
-  )
-
-  private getNextDependencyPath = (
+  private createUniqueDependencyPath = (
     dependencyPath: string,
     headersIndex: number,
     parsedStringObjectIndex: number
@@ -104,24 +92,22 @@ class PrepareData {
     }`
   )
 
-  private getDependencyPathFromItem = (
+  private getNotUniqueParsedStringObjectPartIndex = (
     items: Array<ObjectWithDependenciesItem>,
     parsedStringObject: ParsedStringObject,
     headersItem: Headers
-  ): string => {
-    let dependencyLink = "";
+  ): number => {
 
     for (let i = 0; i < items.length; i++) {
       if (this.equal(
         items[i][LABEL],
         parsedStringObject[headersItem]
       )) {
-        dependencyLink = items[i].dependencyLink || "";
+        return i;
       }
-      continue;
     }
 
-    return dependencyLink;
+    return -1;
   }
 
   private getItemsByPath = (
@@ -146,32 +132,29 @@ class PrepareData {
     HEADERS.forEach((headersItem, headersIndex) => {
       if (headersIndex < CREATE_DEPENDENCIES_UP_TO_INDEX) {
         const path = dependencyPath || headersItem;
-        const items = this.getItemsByPath(objectWithDependencies, path);
-        const parsedStringObjectPartIsUnique = items.length
-          ? this.parsedStringObjectPartIsUnique(
-            items,
-            parsedStringObject,
-            headersItem
-          )
-          : true;
+        const itemsByPath = this.getItemsByPath(objectWithDependencies, path);
 
-        if (!parsedStringObjectPartIsUnique) {
-          dependencyPath = this.getDependencyPathFromItem(
-            items,
+        const notUniqueParsedStringObjectPartIndex
+          = this.getNotUniqueParsedStringObjectPartIndex(
+            itemsByPath,
             parsedStringObject,
             headersItem
           );
-        }
+
+        const parsedStringObjectPartIsUnique = itemsByPath.length
+          ? notUniqueParsedStringObjectPartIndex > -1
+          : true;
 
         // part of parsed string is unique if compare it with the same part of previous strings
         if (parsedStringObjectPartIsUnique) {
-          const dependencyLink = this.getDependencyLink(
+          const dependencyLink = this.createUniqueDependencyPath(
             dependencyPath,
             headersIndex,
             parsedStringObjectIndex
           );
+
           const newItems = [
-            ...items,
+            ...itemsByPath,
             {
               label: parsedStringObject[headersItem],
               value: parsedStringObject[headersItem],
@@ -186,11 +169,12 @@ class PrepareData {
           );
 
           // set dependencyPath for the next iteration over the HEADERS
-          dependencyPath = this.getNextDependencyPath(
-            dependencyPath,
-            headersIndex,
-            parsedStringObjectIndex
-          );
+          dependencyPath = dependencyLink;
+        } else {
+          // set dependencyPath for the next iteration over the HEADERS
+          dependencyPath
+            = itemsByPath[notUniqueParsedStringObjectPartIndex].dependencyLink
+          || "";
         }
       }
     });
