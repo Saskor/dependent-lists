@@ -80,6 +80,7 @@ const jsLoaders = () => {
 
   return loaders;
 };
+
 const plugins = () => {
   const base = [
     new HTMLWebpackPlugin({

@@ -39,6 +39,13 @@
       "<rootDir>/jest-setup/index.js"
     ]
   },
+  "browserslist": [
+    "edge >= 16",
+    "firefox >= 60",
+    "chrome >= 61",
+    "safari >= 11",
+    "opera >= 48"
+  ],
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
