@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { LISTS_NAMES, stringArr } from "../constants/constants";
@@ -9,7 +9,11 @@ import { DependentLists } from "./DependentLists";
 export const Form = observer(
   ({ dataModel }: { dataModel: FormDataServiceType }) => {
     const { init, setNextDependentListOptions } = dataModel;
-    init(stringArr);
+
+    useEffect(() => {
+      init(stringArr);
+    }, []);
+
 
     const onSubmit = useCallback((values, actions) => {
       setTimeout(() => {

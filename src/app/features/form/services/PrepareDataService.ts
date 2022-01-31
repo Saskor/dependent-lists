@@ -142,7 +142,7 @@ class PrepareData {
           );
 
         const parsedStringObjectPartIsUnique = itemsByPath.length
-          ? notUniqueParsedStringObjectPartIndex > -1
+          ? notUniqueParsedStringObjectPartIndex === -1
           : true;
 
         // part of parsed string is unique if compare it with the same part of previous strings
