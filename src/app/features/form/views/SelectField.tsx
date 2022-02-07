@@ -36,7 +36,7 @@ export const SelectField = (
     value => {
       onFieldChange(value, setValue);
     },
-    [ onFieldChange ]
+    [ setValue ]
   );
 
 
